@@ -36,6 +36,9 @@ namespace Abanu.Kernel
             }
             sur = new FramebufferSurface(fb);
             gfx = new GraphicsAdapter(sur);
+            gfx.SetSource(0x00115F9F);
+            gfx.Rectangle(0, 0, sur.Width, sur.Height);
+            gfx.Fill();
 
             SysCalls.RegisterService(SysCallTarget.Tmp_DisplayServer_CreateWindow);
             SysCalls.RegisterService(SysCallTarget.Tmp_DisplayServer_FlushWindow);
