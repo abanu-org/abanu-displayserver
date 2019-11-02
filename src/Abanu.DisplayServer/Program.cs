@@ -29,12 +29,19 @@ namespace Abanu.Kernel
             MessageManager.OnMessageReceived = MessageReceived;
 
             fb = FrameBuffer.Create();
+            if (fb == null)
+            {
+                Console.WriteLine("No Framebuffer found");
+                ApplicationRuntime.Exit(0);
+            }
             sur = new FramebufferSurface(fb);
             gfx = new GraphicsAdapter(sur);
 
             SysCalls.RegisterService(SysCallTarget.Tmp_DisplayServer_CreateWindow);
             SysCalls.RegisterService(SysCallTarget.Tmp_DisplayServer_FlushWindow);
             SysCalls.SetServiceStatus(ServiceStatus.Ready);
+
+            Console.WriteLine("DisplayServer ready");
 
             while (true)
             {
