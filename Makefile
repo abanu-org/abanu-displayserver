@@ -1,17 +1,24 @@
 CUR_DIR = $(CURDIR)
 
-all: net bin
+OUT := ../abanu/os/Abanu.DisplayServer.bin
+NET := bin/Abanu.DisplayServer.exe
 
-.PHONY: all net bin
+# virtual targets
 
-bin: net ../abanu/os/Abanu.DisplayServer.bin
+all: net out
 
-../abanu/os/Abanu.DisplayServer.bin:
+out: $(OUT)
+
+net: $(NET)
+
+.PHONY: all net out
+
+# file targets
+
+$(OUT): $(NET)
 	cd $(CUR_DIR)
 	../abanu/abctl build external $(shell ../abanu/abctl abspath $(abspath bin/Abanu.DisplayServer.exe))
 
-net: bin/Abanu.DisplayServer.exe
-
-bin/Abanu.DisplayServer.exe:
+$(NET):
 	cd $(CUR_DIR)
 	(cd src && ../../abanu/abctl tool msbuild /p:Configuration=Debug /m -Verbosity:minimal)
