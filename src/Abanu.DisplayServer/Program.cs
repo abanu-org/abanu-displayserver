@@ -28,7 +28,7 @@ namespace Abanu.Kernel
             MessageManager.OnDispatchError = OnDispatchError;
             MessageManager.OnMessageReceived = MessageReceived;
 
-            fb = FrameBuffer.Create();
+            fb = CreateFrameBuffer();
             if (fb == null)
             {
                 Console.WriteLine("No Framebuffer found");
@@ -70,6 +70,20 @@ namespace Abanu.Kernel
             }
 
             MessageManager.Send(new SystemMessage(SysCallTarget.ServiceReturn));
+        }
+
+        public static unsafe FrameBuffer CreateFrameBuffer()
+        {
+            var targetProcId = SysCalls.GetProcessIDForCommand(SysCallTarget.GetFramebufferInfo);
+            var fbInfoMem = SysCalls.RequestMessageBuffer(4096, targetProcId);
+            SysCalls.GetFramebufferInfo(fbInfoMem);
+            var fbPresent = (int*)fbInfoMem.Start;
+            if (*fbPresent == 0)
+                return null;
+
+            var fbInfo = *(BootInfoFramebufferInfo*)(fbInfoMem.Start + 4);
+            fbInfo.FbAddr = SysCalls.GetPhysicalMemory(fbInfo.FbAddr, fbInfo.RequiredMemory);
+            return new FrameBuffer(ref fbInfo);
         }
 
         // TODO: Management
