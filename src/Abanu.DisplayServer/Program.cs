@@ -91,7 +91,7 @@ namespace Abanu.Kernel
 
         private static unsafe void CreateWindow(SystemMessage* msg)
         {
-            var sourceProcess = msg->Arg1; // TODO: automatic sourceProcesID detect
+            var sourceProcess = (int)msg->Arg1; // TODO: automatic sourceProcesID detect
             var resultAddr = (CreateWindowResult*)msg->Arg2;
             var width = (int)msg->Arg3;
             var height = (int)msg->Arg4;
