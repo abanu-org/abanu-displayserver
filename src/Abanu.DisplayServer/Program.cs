@@ -1,5 +1,5 @@
 ﻿// This file is part of Abanu, an Operating System written in C#. Web: https://www.abanu.org
-// Licensed under the GNU 2.0 license. See LICENSE.txt file in the project root for full license information.
+// Licensed under the MIT license. See LICENSE.txt file in the project root for full license information.
 
 using System;
 using System.Collections.Generic;
@@ -22,7 +22,7 @@ namespace Abanu.Kernel
         private static ISurface sur;
         private static IGraphicsAdapter gfx;
 
-        public static unsafe void Main()
+        public static void Main()
         {
             ApplicationRuntime.Init();
             MessageManager.OnDispatchError = OnDispatchError;
@@ -52,14 +52,14 @@ namespace Abanu.Kernel
             }
         }
 
-        public static unsafe void OnDispatchError(Exception ex)
+        public static void OnDispatchError(Exception ex)
         {
             Console.WriteLine(ex.Message);
         }
 
-        public static unsafe void MessageReceived(SystemMessage* msg)
+        public static void MessageReceived(in SystemMessage msg)
         {
-            switch (msg->Target)
+            switch (msg.Target)
             {
                 case SysCallTarget.Tmp_DisplayServer_CreateWindow:
                     CreateWindow(msg);
@@ -89,12 +89,12 @@ namespace Abanu.Kernel
         // TODO: Management
         private static Window CurrentWindow;
 
-        private static unsafe void CreateWindow(SystemMessage* msg)
+        private static unsafe void CreateWindow(in SystemMessage msg)
         {
-            var sourceProcess = (int)msg->Arg1; // TODO: automatic sourceProcesID detect
-            var resultAddr = (CreateWindowResult*)msg->Arg2;
-            var width = (int)msg->Arg3;
-            var height = (int)msg->Arg4;
+            var sourceProcess = (int)msg.Arg1; // TODO: automatic sourceProcesID detect
+            var resultAddr = (CreateWindowResult*)msg.Arg2;
+            var width = (int)msg.Arg3;
+            var height = (int)msg.Arg4;
 
             width = Math.Min(width, sur.Width);
             height = Math.Min(height, sur.Height);
@@ -119,7 +119,7 @@ namespace Abanu.Kernel
             *resultAddr = result;
         }
 
-        public static unsafe void FlushWindow(SystemMessage* msg)
+        public static void FlushWindow(in SystemMessage msg)
         {
             var win = CurrentWindow;
             var clientArea = win.ClientArea;
